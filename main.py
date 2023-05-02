@@ -20,20 +20,33 @@ def check_if_commits_are_staged():
 
 
 def generate_commit_message_from_diff(diff):
-    prompt = f"""Given the following git patch file:
+    prompt = f"""
+    What follows "-------" is a git diff for a potential commit.
+    Reply with a markdown unordered list of 5 possible, different Git commit messages 
+    (a Git commit message should be concise but also try to describe 
+    the important changes in the commit), order the list by what you think 
+    would be the best commit message first, and don't include any other text 
+    but the 5 messages in your response.
+    ------- 
     {diff}
-
-    ###
-    Generate a one-sentence long git commit message.
-    Return only the commit message without comments or other text.
+    -------
     """
 
-    response = openai.Completion.create(
+    # response = openai.Completion.create(
+    #     model="gpt-3.5-turbo",
+    #     prompt=prompt, temperature=0,
+    #     max_tokens=128)
+    
+    response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        prompt=prompt, temperature=0,
-        max_tokens=128)
-    message = response['choices'][0]['text']
-    return message.strip().replace('"', '').replace("\n", '')
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": prompt},
+        ]
+    )
+
+    message = response['choices'][0]['message']["content"]
+    return message#.strip().replace('"', '').replace("\n", '')
 
 
 if __name__ == '__main__':
@@ -42,5 +55,30 @@ if __name__ == '__main__':
         exit(0)
     diff = run_command('git diff --staged')
     commit_message = generate_commit_message_from_diff(diff)
+    import markdown, re
+    from PyInquirer import prompt as py_inquirer_prompt, style_from_dict, Token
+
+    html = markdown.markdown(commit_message)
+    suggestions = re.findall(r"<li>(.*?)</li>", html)
+    if len(suggestions) == 0:
+        print("No suggestions found.")
+        exit(0)
+
     # run_command(f'git commit -m "{commit_message}"')
-    print(f'Committed with message: {commit_message}')
+    questions = [
+        {
+            "type": "list",
+            "name": "commit_message",
+            "message": "Commit message suggestions:",
+            "choices": [f"{i + 1}. {item}" for i, item in enumerate(suggestions)],
+            "filter": lambda val: val[3:],
+        }
+    ]
+    try:
+        answers = py_inquirer_prompt(questions)
+    except KeyboardInterrupt:
+        print("Interrupt by users")
+        exit(0)
+    print(f'Committed with message: {answers}')
+    run_command(f'git commit -m "{answers}"')
+    
