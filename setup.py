@@ -9,7 +9,7 @@ from setuptools.command.install import install
 VERSION = "0.0.1"
 
 requirements = [
-    "PyInquirer", 
+    "PyInquirer",
     "Markdown",
     "openai",
 ]
@@ -23,10 +23,8 @@ setup(
     version=VERSION,
     # author="Ligeng Zhu",
     # author_email="ligeng.zhu+github@gmail.com",
-    entry_points = {
-        'console_scripts': [
-            'aic = aic.command_line:main'
-        ],
+    entry_points={
+        "console_scripts": ["aic = aic.aic_gen:main"],
     },
     # description="",
     # long_description_content_type="text/markdown",

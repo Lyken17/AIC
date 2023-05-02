@@ -3,17 +3,18 @@ import openai
 import markdown, re
 from PyInquirer import prompt as py_inquirer_prompt, style_from_dict, Token
 
+
 def run_command(command):
     process = subprocess.run(command, shell=True, capture_output=True, text=True)
     if process.returncode != 0:
-        raise Exception(f'Command {command} failed with exit code {process.returncode}')
+        raise Exception(f"Command {command} failed with exit code {process.returncode}")
     return process.stdout
 
 
 def check_if_commits_are_staged():
     try:
-        result = run_command('git diff --staged')
-        if result == '':
+        result = run_command("git diff --staged")
+        if result == "":
             return False
     except Exception:
         return False
@@ -37,19 +38,20 @@ def generate_commit_message_from_diff(diff):
         messages=[
             {"role": "system", "content": "You are a helpful assistant."},
             {"role": "user", "content": prompt},
-        ]
+        ],
     )
 
-    message = response['choices'][0]['message']["content"]
-    return message#.strip().replace('"', '').replace("\n", '')
+    message = response["choices"][0]["message"]["content"]
+    return message  # .strip().replace('"', '').replace("\n", '')
+
 
 def main():
     if not check_if_commits_are_staged():
-        print('No staged commits')
+        print("No staged commits")
         exit(0)
-    diff = run_command('git diff --staged')
+    diff = run_command("git diff --staged")
     commit_message = generate_commit_message_from_diff(diff)
-    
+
     html = markdown.markdown(commit_message)
     suggestions = re.findall(r"<li>(.*?)</li>", html)
     if len(suggestions) == 0:
@@ -57,15 +59,17 @@ def main():
         exit(0)
 
     # run_command(f'git commit -m "{commit_message}"')
-    answers = py_inquirer_prompt([
-        {
-            "type": "list",
-            "name": "commit_message",
-            "message": "Commit message suggestions:",
-            "choices": [f"{i + 1}. {item}" for i, item in enumerate(suggestions)],
-            "filter": lambda val: val[3:],
-        }
-    ])
+    answers = py_inquirer_prompt(
+        [
+            {
+                "type": "list",
+                "name": "commit_message",
+                "message": "Commit message suggestions:",
+                "choices": [f"{i + 1}. {item}" for i, item in enumerate(suggestions)],
+                "filter": lambda val: val[3:],
+            }
+        ]
+    )
     answers = py_inquirer_prompt(
         [
             {
@@ -78,8 +82,9 @@ def main():
     )
     cmt_msg = answers.get("final_commit_message")
 
-    print(f'Committed with message: {cmt_msg}')
+    print(f"Committed with message: {cmt_msg}")
     run_command(f'git commit -m "{cmt_msg}"')
-    
-if __name__ == '__main__':
+
+
+if __name__ == "__main__":
     main()
