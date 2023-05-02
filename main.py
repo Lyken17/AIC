@@ -29,7 +29,7 @@ def generate_commit_message_from_diff(diff):
     """
 
     response = openai.Completion.create(
-        model="text-davinci-003",
+        model="gpt-3.5-turbo",
         prompt=prompt, temperature=0,
         max_tokens=128)
     message = response['choices'][0]['text']
@@ -42,5 +42,5 @@ if __name__ == '__main__':
         exit(0)
     diff = run_command('git diff --staged')
     commit_message = generate_commit_message_from_diff(diff)
-    run_command(f'git commit -m "{commit_message}"')
+    # run_command(f'git commit -m "{commit_message}"')
     print(f'Committed with message: {commit_message}')
