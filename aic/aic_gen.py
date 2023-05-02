@@ -33,6 +33,7 @@ def generate_commit_message_from_diff(diff):
     {diff}
     -------
     """
+    print("Generating commit message...")
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
