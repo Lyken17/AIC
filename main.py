@@ -31,12 +31,6 @@ def generate_commit_message_from_diff(diff):
     {diff}
     -------
     """
-
-    # response = openai.Completion.create(
-    #     model="gpt-3.5-turbo",
-    #     prompt=prompt, temperature=0,
-    #     max_tokens=128)
-    
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -79,6 +73,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("Interrupt by users")
         exit(0)
-    print(f'Committed with message: {answers}')
-    run_command(f'git commit -m "{answers}"')
+    finally:
+        print(f'Committed with message: {answers}')
+        run_command(f'git commit -m "{answers}"')
     
