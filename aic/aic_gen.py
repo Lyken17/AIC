@@ -1,6 +1,7 @@
 import subprocess
 import openai
-
+import markdown, re
+from PyInquirer import prompt as py_inquirer_prompt, style_from_dict, Token
 
 def run_command(command):
     process = subprocess.run(command, shell=True, capture_output=True, text=True)
@@ -42,16 +43,13 @@ def generate_commit_message_from_diff(diff):
     message = response['choices'][0]['message']["content"]
     return message#.strip().replace('"', '').replace("\n", '')
 
-
-if __name__ == '__main__':
+def main():
     if not check_if_commits_are_staged():
         print('No staged commits')
         exit(0)
     diff = run_command('git diff --staged')
     commit_message = generate_commit_message_from_diff(diff)
-    import markdown, re
-    from PyInquirer import prompt as py_inquirer_prompt, style_from_dict, Token
-
+    
     html = markdown.markdown(commit_message)
     suggestions = re.findall(r"<li>(.*?)</li>", html)
     if len(suggestions) == 0:
@@ -83,3 +81,5 @@ if __name__ == '__main__':
     print(f'Committed with message: {cmt_msg}')
     run_command(f'git commit -m "{cmt_msg}"')
     
+if __name__ == '__main__':
+    main()
