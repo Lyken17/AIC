@@ -78,8 +78,8 @@ if __name__ == '__main__':
             },
         ]
     )
+    cmt_msg = answers.get("final_commit_message")
 
-    cmt_msg = answers["commit_message"]
-    print(f'Committed with message: {answers}')
-    run_command(f'git commit -m "{answers}"')
+    print(f'Committed with message: {cmt_msg}')
+    run_command(f'git commit -m "{cmt_msg}"')
     
