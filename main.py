@@ -59,7 +59,7 @@ if __name__ == '__main__':
         exit(0)
 
     # run_command(f'git commit -m "{commit_message}"')
-    questions = [
+    answers = py_inquirer_prompt([
         {
             "type": "list",
             "name": "commit_message",
@@ -67,13 +67,19 @@ if __name__ == '__main__':
             "choices": [f"{i + 1}. {item}" for i, item in enumerate(suggestions)],
             "filter": lambda val: val[3:],
         }
-    ]
-    try:
-        answers = py_inquirer_prompt(questions)
-    except KeyboardInterrupt:
-        print("Interrupt by users")
-        exit(0)
-    finally:
-        print(f'Committed with message: {answers}')
-        run_command(f'git commit -m "{answers}"')
+    ])
+    answers = py_inquirer_prompt(
+        [
+            {
+                "type": "input",
+                "name": "final_commit_message",
+                "message": "Confirm or edit the commit message:",
+                "default": answers.get("commit_message"),
+            },
+        ]
+    )
+
+    cmt_msg = answers["commit_message"]
+    print(f'Committed with message: {answers}')
+    run_command(f'git commit -m "{answers}"')
     
