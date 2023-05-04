@@ -8,12 +8,6 @@ from setuptools.command.install import install
 
 VERSION = "0.0.1"
 
-# requirements = [
-#     "PyInquirer",
-#     "Markdown",
-#     "openai",
-# ]
-
 requirements = open("requirements.txt").read().splitlines()
 
 VERSION += "_" + datetime.datetime.now().strftime("%Y%m%d%H%M")[2:]
