@@ -22,16 +22,16 @@ setup(
     entry_points={
         "console_scripts": ["aic = aic.aic_gen:main"],
     },
-    # description="",
+    description="",
     # long_description_content_type="text/markdown",
     # license="MIT",
     # Package info
-    # packages=find_packages(exclude=("*test*",)),
+    packages=find_packages(exclude=("*test*",)),
     #
-    # zip_safe=True,
+    zip_safe=True,
     install_requires=requirements,
     # Classifiers
-    # classifiers=[
-    #     "Programming Language :: Python :: 3",
-    # ],
+    classifiers=[
+        "Programming Language :: Python :: 3",
+    ],
 )
