@@ -4,6 +4,12 @@ import markdown, re
 from PyInquirer import prompt as py_inquirer_prompt, style_from_dict, Token
 
 
+def load_config(path):
+    return {
+        "prefix": "",
+        
+    }
+
 def run_command(command):
     process = subprocess.run(command, shell=True, capture_output=True, text=True)
     if process.returncode != 0:
@@ -33,6 +39,10 @@ def generate_commit_message_from_diff(diff):
     {diff}
     -------
     """
+    if len(prompt) >= 4096:
+        # cut off for max prompt length
+        prompt = prompt[:4000]
+        
     print("Generating commit message...")
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
