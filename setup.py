@@ -17,14 +17,14 @@ setup(
     # Metadata
     name="aic",
     version=VERSION,
-    # author="Ligeng Zhu",
-    # author_email="ligeng.zhu+github@gmail.com",
+    author="Ligeng Zhu",
+    author_email="ligeng.zhu+github@gmail.com",
     entry_points={
         "console_scripts": ["aic = aic.aic_gen:main"],
     },
     description="",
-    # long_description_content_type="text/markdown",
-    # license="MIT",
+    long_description_content_type="text/markdown",
+    license="MIT",
     # Package info
     packages=find_packages(exclude=("*test*",)),
     #
